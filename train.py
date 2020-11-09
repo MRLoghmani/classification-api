@@ -50,13 +50,13 @@ def get_model(args):
                                                   args['n_layers_before_tf'],
                                                   False,
                                                   load_searched_arch=load_arch).model
+
   model.summary()
   optimizer = get_optimizer(args['optimizer'])
   model.compile(optimizer=optimizer, loss='categorical_crossentropy',
                 metrics=['accuracy', 'top_k_categorical_accuracy'])
   # output the optimizer to save it in the checkpoint
   return model, optimizer
-
 
 def get_experiment_name(args):
   experiment_dir = f"{args['model_name']}_{args['framework']}_factor{args['factor']}"

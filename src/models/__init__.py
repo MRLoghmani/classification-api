@@ -15,6 +15,7 @@ from .nasnet import NASNetLarge, NASNetMobile, NASNetCIFAR
 from .efficientnet import EfficientNetB0, EfficientNetB1, EfficientNetB2, EfficientNetB3, EfficientNetB4, EfficientNetB5, EfficientNetB6, EfficientNetB7
 from .hypermodels import SimpleHyper
 from .fbnet_mobilenet import FBNet_MobileNetV2Imagenet, FBNet_MobileNetV2CIFAR, FBNet_MobileNetV2CIFARUP
+from .complexnet import ShallowComplexNet, DeepComplexNet
 
 
 # to prevent Keras to bug for too big models.
@@ -71,4 +72,7 @@ model_name_to_class = {
     "FBNet_MobileNetV2Imagenet": FBNet_MobileNetV2Imagenet,
     "FBNet_MobileNetV2CIFAR": FBNet_MobileNetV2CIFAR,
     "FBNet_MobileNetV2CIFARUP": FBNet_MobileNetV2CIFARUP,
+    # complexnet
+    "ShallowComplexNet": ShallowComplexNet,
+    "DeepComplexNet": DeepComplexNet,
 }
