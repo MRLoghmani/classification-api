@@ -115,6 +115,7 @@ class GenericModel:
       # then switch from upstride to tf
       self.x = self._previous_layer.Upstride2TF(self.up2tf_strategy)(self.x)
     self._previous_layer = l
+
     return l
 
   def model(self):

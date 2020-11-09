@@ -6,7 +6,7 @@ from .alexnet import AlexNet, AlexNetQ, AlexNetToy, AlexNetNCHW
 from .mobilenet import MobileNetV2, MobileNetV2NCHW, MobileNetV2Cifar10, MobileNetV2Cifar10_2, MobileNetV2Cifar10Hyper, MobileNetV2Cifar10NCHW
 from .mobilenet_v3 import MobileNetV3Large, MobileNetV3Small
 from .resnet import (ResNet18, ResNet34, ResNet50, ResNet101, ResNet152,
-                     ResNet20CIFAR, ResNet32CIFAR, ResNet44CIFAR, ResNet56CIFAR, ResNetHyper,
+                     ResNet20CIFAR, ResNet32CIFAR, ResNet44CIFAR, ResNet56CIFAR, ResNetHyper, CResNet32CIFAR,
                      ResNet18NCHW, ResNet34NCHW, ResNet50NCHW, ResNet101NCHW, ResNet152NCHW)
 from .squeezenet import SqueezeNet
 from .tiny_darknet import TinyDarknet
@@ -48,6 +48,7 @@ model_name_to_class = {
     "ResNet32CIFAR": ResNet32CIFAR,
     "ResNet44CIFAR": ResNet44CIFAR,
     "ResNet56CIFAR": ResNet56CIFAR,
+    "CResNet32CIFAR": CResNet32CIFAR,
     "SqueezeNet": SqueezeNet,
     "TinyDarknet": TinyDarknet,
     "VGG16": VGG16,

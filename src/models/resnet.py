@@ -264,3 +264,64 @@ class ResNet56CIFAR(ResNetCIFAR):
   def __init__(self, *args, **kwargs):
     self.res_n = 56
     super().__init__(*args, **kwargs)
+
+
+
+class CResNetCIFAR(GenericModel):
+  def __init__(self, *args, **kwargs):
+    self.weight_init = 'glorot_uniform'
+    super(CResNetCIFAR, self).__init__(*args, **kwargs)
+
+  def get_residual_layer(self):
+    n_to_residual = {
+        20: [3],
+        32: [5],
+        44: [7],
+        56: [9],
+    }
+    return n_to_residual[self.res_n] * 3
+
+  def model(self):
+    layers = self.layers()
+    residual_list = self.get_residual_layer()
+    ch = 16
+    self.x = self.layers().Conv2D(int(ch/self.factor), 3, 1, kernel_initializer=self.weight_init, kernel_regularizer=weight_regularizer,
+                                  padding="same", name='conv')(self.x)
+
+    # block 1
+    for i in range(residual_list[0]):
+      self.resblock_cifar(channels=int(ch/self.factor), stride=1, downsample=False, block_name='resblock0_' + str(i))
+    # block 2
+    self.resblock_cifar(channels=int(ch/self.factor) * 2, stride=2, downsample=True, block_name='resblock1_0')
+    for i in range(1, residual_list[1]):
+      self.resblock_cifar(channels=int(ch/self.factor) * 2, stride=1, downsample=False, block_name='resblock1_' + str(i))
+    # block 3
+    self.resblock_cifar(channels=int(ch/self.factor) * 4, stride=2, downsample=True, block_name='resblock2_0')
+    for i in range(1, residual_list[2]):
+      self.resblock_cifar(channels=int(ch/self.factor) * 4, stride=1, downsample=False, block_name='resblock2_' + str(i))
+    # block 4
+    self.x = layers.BatchNormalization(name='batch_norm_last')(self.x)
+    self.x = layers.ActivationiMul(name='activation_last')(self.x)
+    self.x = layers.GlobalAveragePooling2D()(self.x)
+    self.x = layers.Dense(units=self.label_dim, kernel_initializer=self.weight_init, kernel_regularizer=weight_regularizer, use_bias=True,  name='logit')(self.x)
+
+  def resblock_cifar(self, channels, use_bias=True, stride=1, downsample=False, block_name='resblock'):
+    layers = self.layers()
+    x_init = self.x
+    self.x = layers.BatchNormalization(name=block_name + '/batch_norm_0')(self.x)
+    self.x = layers.ActivationiMul(name=block_name + '/activation_0')(self.x)
+    if downsample:
+      x_init = layers.Conv2D(channels, 3, 2, kernel_initializer=self.weight_init, kernel_regularizer=weight_regularizer,
+                             use_bias=use_bias, padding='same', name=block_name + '/conv_init')(x_init)
+    self.x = layers.Conv2D(channels, 3, strides=stride, kernel_initializer=self.weight_init, kernel_regularizer=weight_regularizer,
+                           use_bias=use_bias, padding='same', name=block_name + '/conv_0')(self.x)
+    self.x = layers.BatchNormalization(name=block_name + '/batch_norm_1')(self.x)
+    self.x = layers.ActivationiMul(name=block_name + '/activation_1')(self.x)
+    self.x = layers.Conv2D(channels, 3, 1, kernel_initializer=self.weight_init, kernel_regularizer=weight_regularizer,
+                           use_bias=use_bias, padding='same', name=block_name + '/conv_1')(self.x)
+    self.x = layers.Add()([self.x, x_init])
+
+class CResNet32CIFAR(CResNetCIFAR):
+  def __init__(self, *args, **kwargs):
+    self.res_n = 32
+    super().__init__(*args, **kwargs)
